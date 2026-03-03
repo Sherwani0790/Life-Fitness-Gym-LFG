@@ -34,7 +34,7 @@ export default function Login() {
     setLoading(true);
 
     // Hardcoded login for now
-    if (username === "director" && password === "Login@786") {
+    if (username === "Director" && password === "Login@786") {
       sessionStorage.setItem("isAuthenticated", "true");
       sessionStorage.setItem("userName", username);
       sessionStorage.setItem("userRole", JSON.stringify(["admin"]));
