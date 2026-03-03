@@ -21,7 +21,7 @@ import {
 } from '@/src/UI-Components/select';
 import { cn } from '@/src/lib/utils';
 import { Member, memberSchema, MemberFormValues } from '@/src/types';
-import { maskCNIC, maskPhone, onlyAlphabets } from '@/src/lib/masks';
+import { maskCNIC, maskPhone, onlyAlphabets, onlyNumbers } from '@/src/lib/masks';
 
 interface AddEditDialogProps {
   isOpen: boolean;
@@ -50,6 +50,7 @@ export function AddEditDialog({ isOpen, onClose, onSave, isEditing, selectedMemb
       location: undefined as any,
       paymentMode: undefined as any,
       packageName: '',
+      customAmount: '',
       startDate: new Date().toISOString().split('T')[0],
       status: 'active',
     },
@@ -67,6 +68,7 @@ export function AddEditDialog({ isOpen, onClose, onSave, isEditing, selectedMemb
       joinDate: isEditing && selectedMember ? selectedMember.joinDate : new Date().toISOString().split('T')[0],
       packageId: isEditing && selectedMember ? selectedMember.packageId : 'pkg-custom',
       ...data,
+      customAmount: data.packageName === 'CustomPackage' ? data.customAmount : undefined,
       status: data.status || 'active',
     };
     onSave(memberData);
@@ -79,6 +81,7 @@ export function AddEditDialog({ isOpen, onClose, onSave, isEditing, selectedMemb
         reset({
           ...selectedMember,
           packageName: selectedMember.packageName || '',
+          customAmount: selectedMember.customAmount || '',
           startDate: selectedMember.startDate || new Date().toISOString().split('T')[0],
         } as any);
       } else {
@@ -91,6 +94,7 @@ export function AddEditDialog({ isOpen, onClose, onSave, isEditing, selectedMemb
           location: undefined as any,
           paymentMode: undefined as any,
           packageName: '',
+          customAmount: '',
           startDate: new Date().toISOString().split('T')[0],
           status: 'active',
         });
@@ -269,21 +273,40 @@ export function AddEditDialog({ isOpen, onClose, onSave, isEditing, selectedMemb
               {errors.packageName && <p className="text-[10px] font-medium text-destructive">{errors.packageName.message}</p>}
             </div>
 
-            {packageNameValue && (
-              <div className="space-y-1.5">
-                <Label htmlFor="startDate" className={cn("text-xs font-semibold", errors.startDate && "text-destructive")}>
-                  Select Date <span className="text-destructive">*</span>
-                </Label>
-                <Input 
-                  id="startDate"
-                  type="date"
-                  {...register('startDate')}
-                  min={new Date().toISOString().split('T')[0]}
-                  className={cn("h-9 text-sm", errors.startDate && "border-destructive focus-visible:ring-destructive")}
-                />
-                {errors.startDate && <p className="text-[10px] font-medium text-destructive">{errors.startDate.message}</p>}
-              </div>
-            )}
+              {packageNameValue === 'CustomPackage' && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="customAmount" className={cn("text-xs font-semibold", errors.customAmount && "text-destructive")}>
+                    Enter Amount <span className="text-destructive">*</span>
+                  </Label>
+                  <Input 
+                    id="customAmount"
+                    {...register('customAmount')}
+                    onChange={(e) => {
+                      const masked = onlyNumbers(e.target.value);
+                      setValue('customAmount', masked, { shouldValidate: true });
+                    }}
+                    placeholder="e.g. 5000" 
+                    className={cn("h-9 text-sm", errors.customAmount && "border-destructive focus-visible:ring-destructive")}
+                  />
+                  {errors.customAmount && <p className="text-[10px] font-medium text-destructive">{errors.customAmount.message}</p>}
+                </div>
+              )}
+
+              {packageNameValue && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="startDate" className={cn("text-xs font-semibold", errors.startDate && "text-destructive")}>
+                    Select Date <span className="text-destructive">*</span>
+                  </Label>
+                  <Input 
+                    id="startDate"
+                    type="date"
+                    {...register('startDate')}
+                    min={new Date().toISOString().split('T')[0]}
+                    className={cn("h-9 text-sm", errors.startDate && "border-destructive focus-visible:ring-destructive")}
+                  />
+                  {errors.startDate && <p className="text-[10px] font-medium text-destructive">{errors.startDate.message}</p>}
+                </div>
+              )}
             
             {isEditing && (
               <div className="space-y-1.5">

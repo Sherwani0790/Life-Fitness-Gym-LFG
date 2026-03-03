@@ -32,6 +32,7 @@ export interface Member {
   packageId: string;
   packageName?: string;
   startDate?: string;
+  customAmount?: string;
 }
 
 export interface Employee {
@@ -75,8 +76,17 @@ export const memberSchema = z.object({
   location: z.enum(['Soan Garden', 'Bahria Town']),
   paymentMode: z.enum(['Bank Transfer', 'Cash', 'Easypaisa', 'Jazzcash', 'Other']),
   packageName: z.string().min(1, 'This Field is required'),
+  customAmount: z.string().optional(),
   startDate: z.string().min(1, 'This Field is required').optional(),
   status: z.enum(['active', 'inactive']).optional(),
+}).refine((data) => {
+  if (data.packageName === 'CustomPackage') {
+    return !!data.customAmount && data.customAmount.length > 0;
+  }
+  return true;
+}, {
+  message: "Amount is required for Custom Package",
+  path: ["customAmount"],
 });
 
 export type MemberFormValues = z.infer<typeof memberSchema>;
