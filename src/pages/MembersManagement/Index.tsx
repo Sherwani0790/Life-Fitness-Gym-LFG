@@ -15,15 +15,12 @@ import { cn } from '@/src/lib/utils';
 import { Member, MemberFormValues } from '@/src/types';
 import { AddEditDialog } from './dialogs/AddEditDialog';
 import { ViewDetailsDialog } from './dialogs/ViewDetailsDialog';
+import { dummyMembers } from '@/src/lib/dummyData';
 
 import { TablePagination } from '@/src/UI-Components/table';
 
 export default function MembersManagement() {
-  const [members, setMembers] = React.useState<Member[]>([
-    { id: '1', name: 'Ahmed Khan', fatherName: 'Ibrahim Khan', cnic: '42101-1234567-1', gender: 'male', phone: '0300-1234567', location: 'Soan Garden', paymentMode: 'Cash', joinDate: '2024-01-15', status: 'active', packageId: 'pkg-1', packageName: 'Monthly' },
-    { id: '2', name: 'Sara Ali', fatherName: 'Ali Ahmed', cnic: '42101-7654321-2', gender: 'female', phone: '0321-7654321', location: 'Bahria Town', paymentMode: 'Bank Transfer', joinDate: '2024-02-10', status: 'active', packageId: 'pkg-2', packageName: 'Quaterly' },
-    { id: '3', name: 'Zainab Bibi', fatherName: 'Muhammad Hussain', cnic: '42101-9876543-3', gender: 'female', phone: '0311-9876543', location: 'Soan Garden', paymentMode: 'Easypaisa', joinDate: '2023-11-20', status: 'inactive', packageId: 'pkg-1', packageName: 'Monthly' },
-  ]);
+  const [members, setMembers] = React.useState<Member[]>(dummyMembers);
 
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);

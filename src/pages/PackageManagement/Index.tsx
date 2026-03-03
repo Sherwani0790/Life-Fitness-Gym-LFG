@@ -16,19 +16,10 @@ import { Package, PackageFormValues } from '@/src/types';
 import { AddEditDialog } from './dialogs/AddEditDialog';
 import { ViewDetailsDialog } from './dialogs/ViewDetailsDialog';
 import { TablePagination } from '@/src/UI-Components/table';
+import { dummyPackages } from '@/src/lib/dummyData';
 
 export default function PackageManagement() {
-  const [packages, setPackages] = React.useState<Package[]>([
-    { id: '1', name: 'Monthly', price: 2000, duration: '1 Month', description: 'Standard monthly membership.', status: 'active' },
-    { id: '2', name: 'Quaterly', price: 5000, duration: '3 Months', description: 'Standard quarterly membership.', status: 'active' },
-    { id: '3', name: 'Six Month', price: 9000, duration: '6 Months', description: 'Standard six-month membership.', status: 'active' },
-    { id: '4', name: 'Yearly', price: 15000, duration: '12 Months', description: 'Standard yearly membership.', status: 'active' },
-    { id: '5', name: '2 Person Group', price: 3500, duration: '1 Month', description: 'Group membership for 2 persons.', status: 'active' },
-    { id: '6', name: '3 Person Group', price: 5000, duration: '1 Month', description: 'Group membership for 3 persons.', status: 'active' },
-    { id: '7', name: 'TouchStone', price: 2500, duration: '1 Month', description: 'Special TouchStone package.', status: 'active' },
-    { id: '8', name: 'Taxi Guys', price: 1500, duration: '1 Month', description: 'Special package for taxi drivers.', status: 'active' },
-    { id: '9', name: 'CustomPackage', price: 3000, duration: '1 Month', description: 'Custom corporate package.', status: 'active' },
-  ]);
+  const [packages, setPackages] = React.useState<Package[]>(dummyPackages);
 
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);

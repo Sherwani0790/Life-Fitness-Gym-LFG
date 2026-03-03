@@ -16,13 +16,10 @@ import { Trainer, TrainerFormValues } from '@/src/types';
 import { AddEditDialog } from './dialogs/AddEditDialog';
 import { ViewDetailsDialog } from './dialogs/ViewDetailsDialog';
 import { TablePagination } from '@/src/UI-Components/table';
+import { dummyTrainers } from '@/src/lib/dummyData';
 
 export default function TrainersManagement() {
-  const [trainers, setTrainers] = React.useState<Trainer[]>([
-    { id: '1', name: 'Hamza Malik', cnic: '42101-1111111-1', gender: 'male', phone: '0300-5556667', specialization: 'Bodybuilding', joinDate: '2022-12-01', status: 'active' },
-    { id: '2', name: 'Usman Ghani', cnic: '42101-2222222-2', gender: 'male', phone: '0321-8889990', specialization: 'Yoga & Cardio', joinDate: '2023-03-15', status: 'active' },
-    { id: '3', name: 'Bilal Ahmed', cnic: '42101-3333333-3', gender: 'male', phone: '0311-2223334', specialization: 'Crossfit', joinDate: '2023-10-10', status: 'inactive' },
-  ]);
+  const [trainers, setTrainers] = React.useState<Trainer[]>(dummyTrainers);
 
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);

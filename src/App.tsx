@@ -5,6 +5,7 @@ import MembersManagement from './pages/MembersManagement/Index';
 import EmployeesManagement from './pages/EmployeesManagement/Index';
 import TrainersManagement from './pages/TrainersManagement/Index';
 import PackageManagement from './pages/PackageManagement/Index';
+import CompanyManagement from './pages/CompanyManagement/Index';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="/employees" element={<EmployeesManagement />} />
             <Route path="/trainers" element={<TrainersManagement />} />
             <Route path="/packages" element={<PackageManagement />} />
+            <Route path="/companies" element={<CompanyManagement />} />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
           </Route>
         </Route>

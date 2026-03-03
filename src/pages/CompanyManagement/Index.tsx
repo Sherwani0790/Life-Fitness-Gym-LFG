@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Plus, Search, MoreVertical, Edit, Trash2, Eye, Filter } from 'lucide-react';
+import { Plus, Search, MoreVertical, Edit, Trash2, Eye, Filter, Building2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/UI-Components/card';
 import { Button } from '@/src/UI-Components/button';
@@ -12,59 +12,54 @@ import {
   DropdownMenuTrigger 
 } from '@/src/UI-Components/dropdown-menu';
 import { cn } from '@/src/lib/utils';
-import { Employee, EmployeeFormValues } from '@/src/types';
+import { Company } from '@/src/types';
 import { AddEditDialog } from './dialogs/AddEditDialog';
 import { ViewDetailsDialog } from './dialogs/ViewDetailsDialog';
-import { dummyEmployees } from '@/src/lib/dummyData';
+import { TablePagination } from '@/src/UI-Components/table';
+import { dummyCompanies } from '@/src/lib/dummyData';
 
-export default function EmployeesManagement() {
-  const [employees, setEmployees] = React.useState<Employee[]>(dummyEmployees);
+export default function CompanyManagement() {
+  const [companies, setCompanies] = React.useState<Company[]>(dummyCompanies);
 
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = React.useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = React.useState(false);
-  const [selectedEmployee, setSelectedEmployee] = React.useState<Employee | null>(null);
+  const [selectedCompany, setSelectedCompany] = React.useState<Company | null>(null);
   const [isEditing, setIsEditing] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const pageSize = 12;
 
-  const filteredEmployees = employees.filter(e => 
-    e.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    e.cnic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.role.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCompanies = companies.filter(c => 
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    c.industry.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const onSubmit = (data: EmployeeFormValues) => {
-    if (isEditing && selectedEmployee) {
-      const updatedEmployee: Employee = {
-        ...selectedEmployee,
-        ...data,
-        status: data.status || 'active',
-      };
-      setEmployees(employees.map(e => e.id === updatedEmployee.id ? updatedEmployee : e));
+  const paginatedCompanies = filteredCompanies.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const onSave = (company: Company) => {
+    if (isEditing) {
+      setCompanies(companies.map(c => c.id === company.id ? company : c));
     } else {
-      const newEmployee: Employee = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...data,
-        status: 'active',
-        joinDate: new Date().toISOString().split('T')[0],
-      };
-      setEmployees([...employees, newEmployee]);
-    }
-    handleCloseDialog();
-  };
-
-  const handleDeleteEmployee = (id: string) => {
-    if (confirm('Are you sure you want to delete this employee?')) {
-      setEmployees(employees.filter(e => e.id !== id));
+      setCompanies([...companies, company]);
     }
   };
 
-  const openViewDialog = (employee: Employee) => {
-    setSelectedEmployee(employee);
+  const handleDeleteCompany = (id: string) => {
+    if (confirm('Are you sure you want to delete this company?')) {
+      setCompanies(companies.filter(c => c.id !== id));
+    }
+  };
+
+  const openViewDialog = (company: Company) => {
+    setSelectedCompany(company);
     setIsViewDialogOpen(true);
   };
 
-  const openEditDialog = (employee: Employee) => {
-    setSelectedEmployee(employee);
+  const openEditDialog = (company: Company) => {
+    setSelectedCompany(company);
     setIsEditing(true);
     setIsAddDialogOpen(true);
   };
@@ -72,31 +67,31 @@ export default function EmployeesManagement() {
   const handleCloseDialog = () => {
     setIsAddDialogOpen(false);
     setIsEditing(false);
-    setSelectedEmployee(null);
+    setSelectedCompany(null);
   };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-foreground">Employees Management</h1>
-          <p className="text-sm text-muted-foreground mt-1">Manage your gym staff and employees.</p>
+          <h1 className="text-xl font-bold tracking-tight text-foreground">Company Management</h1>
+          <p className="text-sm text-muted-foreground mt-1">Manage your corporate partners and their membership limits.</p>
         </div>
-        <Button onClick={() => { setIsEditing(false); setSelectedEmployee(null); setIsAddDialogOpen(true); }} className="gap-2 shadow-sm h-9 text-sm">
+        <Button onClick={() => { setIsEditing(false); setSelectedCompany(null); setIsAddDialogOpen(true); }} className="gap-2 shadow-sm h-9 text-sm">
           <Plus size={16} />
-          Add New Employee
+          Add New Company
         </Button>
       </div>
 
       <Card className="border-border shadow-sm overflow-hidden">
         <CardHeader className="pb-3 bg-muted/30 border-b border-border">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <CardTitle className="text-base font-semibold">Employee List</CardTitle>
+            <CardTitle className="text-base font-semibold">Company List</CardTitle>
             <div className="flex items-center gap-2 w-full md:w-auto">
               <div className="relative flex-1 md:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
                 <Input 
-                  placeholder="Search employees..." 
+                  placeholder="Search companies..." 
                   className="pl-9 h-9 text-sm" 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -113,19 +108,19 @@ export default function EmployeesManagement() {
             <table className="w-full text-sm text-left border-collapse">
               <thead>
                 <tr className="border-b border-border text-muted-foreground font-medium bg-muted/10">
-                  <th className="py-3 px-6 text-xs uppercase tracking-wider">Employee</th>
-                  <th className="py-3 px-6 text-xs uppercase tracking-wider">CNIC</th>
-                  <th className="py-3 px-6 text-xs uppercase tracking-wider">Role</th>
+                  <th className="py-3 px-6 text-xs uppercase tracking-wider">Company Name</th>
+                  <th className="py-3 px-6 text-xs uppercase tracking-wider">Industry</th>
                   <th className="py-3 px-6 text-xs uppercase tracking-wider">Contact</th>
+                  <th className="py-3 px-6 text-xs uppercase tracking-wider">Members Limit</th>
                   <th className="py-3 px-6 text-xs uppercase tracking-wider">Status</th>
                   <th className="py-3 px-6 text-xs uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <AnimatePresence mode="popLayout">
-                  {filteredEmployees.map((employee) => (
+                  {paginatedCompanies.map((company) => (
                     <motion.tr 
-                      key={employee.id}
+                      key={company.id}
                       layout
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -134,21 +129,24 @@ export default function EmployeesManagement() {
                     >
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
-                            {employee.name[0]}
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                            <Building2 size={14} />
                           </div>
-                          <p className="font-medium text-sm">{employee.name}</p>
+                          <span className="font-medium text-sm">{company.name}</span>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-muted-foreground text-sm">{employee.cnic}</td>
-                      <td className="py-4 px-6 text-muted-foreground text-sm">{employee.role}</td>
-                      <td className="py-4 px-6 text-muted-foreground text-sm">{employee.phone}</td>
+                      <td className="py-4 px-6 text-muted-foreground text-sm">{company.industry}</td>
+                      <td className="py-4 px-6 text-muted-foreground text-sm">
+                        <div>{company.email}</div>
+                        <div className="text-[10px]">{company.phone}</div>
+                      </td>
+                      <td className="py-4 px-6 text-muted-foreground text-sm">{company.membersLimit}</td>
                       <td className="py-4 px-6">
-                        <Badge variant={employee.status === 'active' ? 'secondary' : 'outline'} className={cn(
+                        <Badge variant={company.status === 'active' ? 'secondary' : 'outline'} className={cn(
                           "text-[10px] uppercase font-bold px-2 py-0.5",
-                          employee.status === 'active' ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground"
+                          company.status === 'active' ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-muted text-muted-foreground"
                         )}>
-                          {employee.status}
+                          {company.status}
                         </Badge>
                       </td>
                       <td className="py-4 px-6 text-right">
@@ -159,14 +157,14 @@ export default function EmployeesManagement() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-40">
-                            <DropdownMenuItem onClick={() => openViewDialog(employee)} className="gap-2 text-xs">
+                            <DropdownMenuItem onClick={() => openViewDialog(company)} className="gap-2 text-xs">
                               <Eye size={14} /> View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => openEditDialog(employee)} className="gap-2 text-xs">
-                              <Edit size={14} /> Edit Employee
+                            <DropdownMenuItem onClick={() => openEditDialog(company)} className="gap-2 text-xs">
+                              <Edit size={14} /> Edit Company
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteEmployee(employee.id)} className="gap-2 text-xs text-destructive focus:text-destructive">
-                              <Trash2 size={14} /> Delete Employee
+                            <DropdownMenuItem onClick={() => handleDeleteCompany(company.id)} className="gap-2 text-xs text-destructive focus:text-destructive">
+                              <Trash2 size={14} /> Delete Company
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -174,31 +172,37 @@ export default function EmployeesManagement() {
                     </motion.tr>
                   ))}
                 </AnimatePresence>
-                {filteredEmployees.length === 0 && (
+                {filteredCompanies.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center text-muted-foreground text-sm italic">
-                      No employees found matching your search.
+                    <td colSpan={6} className="py-12 text-center text-muted-foreground text-sm italic">
+                      No companies found matching your search.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
+          <TablePagination 
+            totalItems={filteredCompanies.length} 
+            pageSize={pageSize} 
+            currentPage={currentPage} 
+            onPageChange={setCurrentPage} 
+          />
         </CardContent>
       </Card>
 
       <AddEditDialog 
         isOpen={isAddDialogOpen} 
         onClose={handleCloseDialog} 
-        onSubmit={onSubmit} 
+        onSave={onSave} 
         isEditing={isEditing} 
-        selectedEmployee={selectedEmployee} 
+        selectedCompany={selectedCompany} 
       />
 
       <ViewDetailsDialog 
         isOpen={isViewDialogOpen} 
         onClose={() => setIsViewDialogOpen(false)} 
-        employee={selectedEmployee} 
+        company={selectedCompany} 
       />
     </div>
   );

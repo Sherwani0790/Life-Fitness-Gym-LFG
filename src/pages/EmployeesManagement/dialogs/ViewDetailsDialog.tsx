@@ -22,7 +22,7 @@ export function ViewDetailsDialog({ isOpen, onClose, employee }: ViewDetailsDial
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] p-0 overflow-hidden border-none shadow-2xl">
+      <DialogContent className="sm:max-w-120.25 p-0 overflow-hidden border-none shadow-2xl">
         <DialogHeader className="p-6 bg-transparent border-b border-border/50">
           <DialogTitle className="text-lg font-bold">Employee Profile</DialogTitle>
         </DialogHeader>

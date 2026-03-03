@@ -20,15 +20,15 @@ import {
   SelectValue,
 } from "@/src/UI-Components/select";
 import { cn } from "@/src/lib/utils";
-import { Package, packageSchema, PackageFormValues } from "@/src/types";
-import { onlyAlphabets, onlyNumbers, onlyAlphanumeric } from "@/src/lib/masks";
+import { Company, companySchema, CompanyFormValues } from "@/src/types";
+import { maskPhone, onlyNumbers } from "@/src/lib/masks";
 
 interface AddEditDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (pkg: Package) => void;
+  onSave: (company: Company) => void;
   isEditing: boolean;
-  selectedPackage: Package | null;
+  selectedCompany: Company | null;
 }
 
 export function AddEditDialog({
@@ -36,7 +36,7 @@ export function AddEditDialog({
   onClose,
   onSave,
   isEditing,
-  selectedPackage,
+  selectedCompany,
 }: AddEditDialogProps) {
   const {
     register,
@@ -45,69 +45,71 @@ export function AddEditDialog({
     setValue,
     watch,
     formState: { errors },
-  } = useForm<PackageFormValues>({
-    resolver: zodResolver(packageSchema),
+  } = useForm<CompanyFormValues>({
+    resolver: zodResolver(companySchema),
     defaultValues: {
       name: "",
-      price: "",
-      duration: "",
-      description: "",
+      email: "",
+      phone: "",
+      address: "",
+      industry: "",
+      membersLimit: "",
       status: "active",
     },
   });
 
   const statusValue = watch("status");
 
-  /*************  ✨ Windsurf Command ⭐  *************/
-  /**
-   * Handles the submission of the form data, constructs a new Package object and calls onSave with it.
-   * @param {PackageFormValues} data - The form data
-   */
-  /*******  caafc34b-d793-4ff8-900d-1e6103a8eea4  *******/ const handleFormSubmit =
-    (data: PackageFormValues) => {
-      const packageData: Package = {
-        id:
-          isEditing && selectedPackage
-            ? selectedPackage.id
-            : Math.random().toString(36).substr(2, 9),
-        ...data,
-        price: Number(data.price),
-        status: data.status || "active",
-      };
-      onSave(packageData);
-      onClose();
+  const handleFormSubmit = (data: CompanyFormValues) => {
+    const companyData: Company = {
+      id:
+        isEditing && selectedCompany
+          ? selectedCompany.id
+          : Math.random().toString(36).substr(2, 9),
+      joinDate:
+        isEditing && selectedCompany
+          ? selectedCompany.joinDate
+          : new Date().toISOString().split("T")[0],
+      ...data,
+      membersLimit: parseInt(data.membersLimit),
+      status: data.status || "active",
     };
+    onSave(companyData);
+    onClose();
+  };
 
   React.useEffect(() => {
     if (isOpen) {
-      if (isEditing && selectedPackage) {
+      if (isEditing && selectedCompany) {
         reset({
-          ...selectedPackage,
-          price: selectedPackage.price.toString(),
+          ...selectedCompany,
+          membersLimit: selectedCompany.membersLimit.toString(),
         } as any);
       } else {
         reset({
           name: "",
-          price: "",
-          duration: "",
-          description: "",
+          email: "",
+          phone: "",
+          address: "",
+          industry: "",
+          membersLimit: "",
           status: "active",
         });
       }
     }
-  }, [isOpen, isEditing, selectedPackage, reset]);
+  }, [isOpen, isEditing, selectedCompany, reset]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-120.25 p-0 overflow-hidden border-none shadow-2xl">
         <DialogHeader className="p-6 bg-transparent text-foreground border-b border-border/50">
           <DialogTitle className="text-lg font-bold">
-            {isEditing ? "Edit Package" : "Add New Package"}
+            {isEditing ? "Edit Company" : "Add New Company"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-xs">
             {isEditing
-              ? "Update the package details below."
-              : "Enter the package details to create a new plan."}
+              ? "Update the company details below."
+              : "Enter the company details to create a new partner."}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -122,16 +124,12 @@ export function AddEditDialog({
                 errors.name && "text-destructive",
               )}
             >
-              Package Name <span className="text-destructive">*</span>
+              Company Name <span className="text-destructive">*</span>
             </Label>
             <Input
               id="name"
               {...register("name")}
-              onChange={(e) => {
-                const masked = onlyAlphabets(e.target.value);
-                setValue("name", masked, { shouldValidate: true });
-              }}
-              placeholder="Enter Package Name"
+              placeholder="Enter Company Name"
               className={cn(
                 "h-9 text-sm",
                 errors.name &&
@@ -144,93 +142,151 @@ export function AddEditDialog({
               </p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label
-                htmlFor="price"
+                htmlFor="email"
                 className={cn(
                   "text-xs font-semibold",
-                  errors.price && "text-destructive",
+                  errors.email && "text-destructive",
                 )}
               >
-                Price (PKR) <span className="text-destructive">*</span>
+                Company Email <span className="text-destructive">*</span>
               </Label>
               <Input
-                id="price"
-                {...register("price")}
-                onChange={(e) => {
-                  const masked = onlyNumbers(e.target.value);
-                  setValue("price", masked, { shouldValidate: true });
-                }}
-                placeholder="Enter Package Price"
+                id="email"
+                type="email"
+                {...register("email")}
+                placeholder="Enter Company Email"
                 className={cn(
                   "h-9 text-sm",
-                  errors.price &&
+                  errors.email &&
                     "border-destructive focus-visible:ring-destructive",
                 )}
               />
-              {errors.price && (
+              {errors.email && (
                 <p className="text-[10px] font-medium text-destructive">
-                  {errors.price.message}
+                  {errors.email.message}
                 </p>
               )}
             </div>
             <div className="space-y-1.5">
               <Label
-                htmlFor="duration"
+                htmlFor="phone"
                 className={cn(
                   "text-xs font-semibold",
-                  errors.duration && "text-destructive",
+                  errors.phone && "text-destructive",
                 )}
               >
-                Duration <span className="text-destructive">*</span>
+                Phone Number <span className="text-destructive">*</span>
               </Label>
               <Input
-                id="duration"
-                {...register("duration")}
+                id="phone"
+                {...register("phone")}
                 onChange={(e) => {
-                  const masked = onlyAlphanumeric(e.target.value);
-                  setValue("duration", masked, { shouldValidate: true });
+                  const masked = maskPhone(e.target.value);
+                  setValue("phone", masked, { shouldValidate: true });
                 }}
-                placeholder="Enter Package Duration"
+                placeholder="Enter Phone Number"
                 className={cn(
                   "h-9 text-sm",
-                  errors.duration &&
+                  errors.phone &&
                     "border-destructive focus-visible:ring-destructive",
                 )}
               />
-              {errors.duration && (
+              {errors.phone && (
                 <p className="text-[10px] font-medium text-destructive">
-                  {errors.duration.message}
+                  {errors.phone.message}
                 </p>
               )}
             </div>
           </div>
+
           <div className="space-y-1.5">
             <Label
-              htmlFor="description"
+              htmlFor="address"
               className={cn(
                 "text-xs font-semibold",
-                errors.description && "text-destructive",
+                errors.address && "text-destructive",
               )}
             >
-              Description <span className="text-destructive">*</span>
+              Company Address <span className="text-destructive">*</span>
             </Label>
             <Input
-              id="description"
-              {...register("description")}
-              placeholder="Briefly describe the package benefits"
+              id="address"
+              {...register("address")}
+              placeholder="Enter Address of the Company"
               className={cn(
                 "h-9 text-sm",
-                errors.description &&
+                errors.address &&
                   "border-destructive focus-visible:ring-destructive",
               )}
             />
-            {errors.description && (
+            {errors.address && (
               <p className="text-[10px] font-medium text-destructive">
-                {errors.description.message}
+                {errors.address.message}
               </p>
             )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="industry"
+                className={cn(
+                  "text-xs font-semibold",
+                  errors.industry && "text-destructive",
+                )}
+              >
+                Industry <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="industry"
+                {...register("industry")}
+                placeholder="Enter Industry Type"
+                className={cn(
+                  "h-9 text-sm",
+                  errors.industry &&
+                    "border-destructive focus-visible:ring-destructive",
+                )}
+              />
+              {errors.industry && (
+                <p className="text-[10px] font-medium text-destructive">
+                  {errors.industry.message}
+                </p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="membersLimit"
+                className={cn(
+                  "text-xs font-semibold",
+                  errors.membersLimit && "text-destructive",
+                )}
+              >
+                Members Limit <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="membersLimit"
+                {...register("membersLimit")}
+                onChange={(e) => {
+                  const masked = onlyNumbers(e.target.value);
+                  setValue("membersLimit", masked, { shouldValidate: true });
+                }}
+                placeholder="Enter Members Limit"
+                className={cn(
+                  "h-9 text-sm",
+                  errors.membersLimit &&
+                    "border-destructive focus-visible:ring-destructive",
+                )}
+              />
+              {errors.membersLimit && (
+                <p className="text-[10px] font-medium text-destructive">
+                  {errors.membersLimit.message}
+                </p>
+              )}
+            </div>
           </div>
 
           {isEditing && (
@@ -265,7 +321,7 @@ export function AddEditDialog({
               Cancel
             </Button>
             <Button type="submit" className="h-9 text-xs px-6">
-              {isEditing ? "Update Package" : "Save Package"}
+              {isEditing ? "Update Company" : "Save Company"}
             </Button>
           </DialogFooter>
         </form>

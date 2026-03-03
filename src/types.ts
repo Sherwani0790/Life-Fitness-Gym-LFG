@@ -33,6 +33,21 @@ export interface Member {
   packageName?: string;
   startDate?: string;
   customAmount?: string;
+  memberType: 'normal' | 'company';
+  companyId?: string;
+  companyName?: string;
+}
+
+export interface Company {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  industry: string;
+  membersLimit: number;
+  status: 'active' | 'inactive';
+  joinDate: string;
 }
 
 export interface Employee {
@@ -79,6 +94,8 @@ export const memberSchema = z.object({
   customAmount: z.string().optional(),
   startDate: z.string().min(1, 'This Field is required').optional(),
   status: z.enum(['active', 'inactive']).optional(),
+  memberType: z.enum(['normal', 'company']),
+  companyId: z.string().optional(),
 }).refine((data) => {
   if (data.packageName === 'CustomPackage') {
     return !!data.customAmount && data.customAmount.length > 0;
@@ -87,9 +104,29 @@ export const memberSchema = z.object({
 }, {
   message: "Amount is required for Custom Package",
   path: ["customAmount"],
+}).refine((data) => {
+  if (data.memberType === 'company') {
+    return !!data.companyId && data.companyId.length > 0;
+  }
+  return true;
+}, {
+  message: "Company is required for Company member type",
+  path: ["companyId"],
 });
 
 export type MemberFormValues = z.infer<typeof memberSchema>;
+
+export const companySchema = z.object({
+  name: z.string().min(1, 'This Field is required'),
+  email: z.string().email('Invalid email address').min(1, 'This Field is required'),
+  phone: z.string().regex(/^\d{4}-\d{7}$/, 'Invalid Phone format (e.g. 0300-1234567)').min(1, 'This Field is required'),
+  address: z.string().min(1, 'This Field is required'),
+  industry: z.string().min(1, 'This Field is required'),
+  membersLimit: z.string().min(1, 'This Field is required'),
+  status: z.enum(['active', 'inactive']).optional(),
+});
+
+export type CompanyFormValues = z.infer<typeof companySchema>;
 
 export const employeeSchema = z.object({
   name: z.string().min(1, 'This Field is required'),

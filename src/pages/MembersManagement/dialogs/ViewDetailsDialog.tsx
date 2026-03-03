@@ -22,7 +22,7 @@ export function ViewDetailsDialog({ isOpen, onClose, member }: ViewDetailsDialog
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] p-0 overflow-hidden border-none shadow-2xl">
+      <DialogContent className="sm:max-w-120.25 p-0 overflow-hidden border-none shadow-2xl">
         <DialogHeader className="p-6 bg-transparent border-b border-border/50">
           <DialogTitle className="text-lg font-bold">Member Profile</DialogTitle>
         </DialogHeader>
@@ -39,9 +39,18 @@ export function ViewDetailsDialog({ isOpen, onClose, member }: ViewDetailsDialog
               )}>
                 {member.status}
               </Badge>
+              <Badge variant="outline" className="text-[10px] uppercase font-bold mt-1 ml-2">
+                {member.memberType}
+              </Badge>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-y-4 gap-x-6 border-t border-border pt-6">
+            {member.memberType === 'company' && (
+              <div className="space-y-1 col-span-2 bg-primary/5 p-2 rounded-md border border-primary/10 mb-2">
+                <p className="text-[10px] text-primary uppercase font-bold tracking-wider">Associated Company</p>
+                <p className="text-sm font-bold text-foreground">{member.companyName || 'N/A'}</p>
+              </div>
+            )}
             <div className="space-y-1">
               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Father's Name</p>
               <p className="text-xs font-medium text-foreground">{member.fatherName}</p>
