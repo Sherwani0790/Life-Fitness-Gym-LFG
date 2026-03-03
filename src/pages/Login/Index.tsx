@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
-import { motion } from 'motion/react';
-import { Button } from '@/src/UI-Components/button';
-import { Input } from '@/src/UI-Components/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/src/UI-Components/card';
-import { Logo } from '@/src/components/Logo';
-import { apiKB } from '@/src/services/api';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { motion } from "motion/react";
+import { Button } from "@/src/UI-Components/button";
+import { Input } from "@/src/UI-Components/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/src/UI-Components/card";
+import { Logo } from "@/src/components/Logo";
+import { apiKB } from "@/src/services/api";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -70,7 +77,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-muted/50 flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full"
@@ -80,31 +87,39 @@ export default function Login() {
             <div className="mb-6">
               <Logo className="h-16 w-16" showText={false} />
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight">Life Fitness Gym LFG</CardTitle>
-            <CardDescription className="text-muted-foreground mt-2">Manage your fitness journey with LFG</CardDescription>
+            <CardTitle className="text-3xl font-bold tracking-tight">
+              Life Fitness Gym LFG
+            </CardTitle>
+            <CardDescription className="text-muted-foreground mt-2">
+              Manage your fitness journey with LFG
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">User Name</label>
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  User Name
+                </label>
                 <Input
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   type="text"
                   placeholder="Enter username"
-                  className={error && !username ? 'border-destructive' : ''}
+                  className={error && !username ? "border-destructive" : ""}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Password
+                </label>
                 <div className="relative">
                   <Input
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className={error && !password ? 'border-destructive' : ''}
+                    className={error && !password ? "border-destructive" : ""}
                   />
                   <button
                     type="button"
@@ -116,21 +131,29 @@ export default function Login() {
                 </div>
               </div>
 
-              {error && <p className="text-destructive text-sm font-medium">{error}</p>}
+              {error && (
+                <p className="text-destructive text-sm font-medium">{error}</p>
+              )}
 
               <Button
                 type="submit"
                 className="w-full font-semibold"
                 disabled={loading}
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-border flex justify-between text-[10px] text-muted-foreground font-medium uppercase tracking-wider">
-              <span>Admin: director / Login@786</span>
-            </div>
+            {/* <div className="mt-8 pt-6 border-t border-border flex justify-between text-[10px] text-muted-foreground font-medium uppercase tracking-wider"> */}
+            {/* <span>Admin: director / Login@786</span> */}
+            {/* </div> */}
           </CardContent>
+          <CardFooter className="flex flex-col items-center text-sm">
+            <p className="text-xs text-muted-foreground/70 m-0">
+              &copy; {new Date().getFullYear()} Life Fitness Gym. All rights
+              reserved.
+            </p>
+          </CardFooter>
         </Card>
       </motion.div>
     </div>
