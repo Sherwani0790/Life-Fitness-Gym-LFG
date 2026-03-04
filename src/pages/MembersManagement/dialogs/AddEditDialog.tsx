@@ -507,8 +507,6 @@ export function AddEditDialog({
                   <SelectItem value="Yearly">Yearly</SelectItem>
                   <SelectItem value="2 Person Group">2 Person Group</SelectItem>
                   <SelectItem value="3 Person Group">3 Person Group</SelectItem>
-                  <SelectItem value="TouchStone">TouchStone</SelectItem>
-                  <SelectItem value="Taxi Guys">Taxi Guys</SelectItem>
                   <SelectItem value="CustomPackage">CustomPackage</SelectItem>
                 </SelectContent>
               </Select>
@@ -519,7 +517,7 @@ export function AddEditDialog({
               )}
             </div>
 
-            {packageNameValue === "CustomPackage" && (
+            {packageNameValue && (
               <div className="space-y-1.5">
                 <Label
                   htmlFor="customAmount"
@@ -567,7 +565,7 @@ export function AddEditDialog({
                   id="startDate"
                   type="date"
                   {...register("startDate")}
-                  min={new Date().toISOString().split("T")[0]}
+                  // min={new Date().toISOString().split("T")[0]}
                   className={cn(
                     "h-9 text-sm",
                     errors.startDate &&
